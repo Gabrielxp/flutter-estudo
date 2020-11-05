@@ -138,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             //Para colocar um card na tela inteira da pra por ele num Containet
-            Chart(_recentTransactions),
+            //Chart(_recentTransactions),
             TransactionList(_transactions)
           ],
         ),
