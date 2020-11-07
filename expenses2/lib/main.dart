@@ -12,7 +12,6 @@ import 'package:expenses2/models/transaction.dart';
 import 'models/transaction.dart';
 import 'models/transaction.dart';
 
-
 main(List<String> args) {
   runApp(ExpensesApp());
 }
@@ -27,71 +26,46 @@ class ExpensesApp extends StatelessWidget {
           primarySwatch: Colors.teal,
           accentColor: Colors.teal,
           fontFamily: 'Roboto',
+
           //JA ESSA PARADA DEFINE UMA PERSONALIZAÇÃO DE THEME PARA APP BAR
           appBarTheme: AppBarTheme(
-            textTheme: ThemeData.light().textTheme.copyWith(
-              title: TextStyle(
-                fontSize: 20,
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.bold
-              )
-            )
-          ),
+              textTheme: ThemeData.light().textTheme.copyWith(
+                  title: TextStyle(
+                      fontSize: 20,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.bold))),
           //ESSA PARADA DEFINE UM PADRÃO DE THEME PARA TODOS OS TITLES
           textTheme: ThemeData.light().textTheme.copyWith(
               title: TextStyle(
-                fontSize: 16,
-                fontFamily: 'OpenSans',
-                fontWeight: FontWeight.bold
-              )
-          )
-
-      ),
+                  fontSize: 16,
+                  fontFamily: 'OpenSans',
+                  fontWeight: FontWeight.bold),
+              button: TextStyle(color: Colors.teal[900]))),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-
- final List<Transaction> _transactions = [
-   Transaction(
-        id: "t4",
-        title: "Old Tênis de Mesa",
-        value: 310.23,
-        date: DateTime.now().subtract(Duration(days: 33))),
-    Transaction(
-        id: "t4",
-        title: "Novo Tênis de Mesa",
-        value: 310.23,
-        date: DateTime.now().subtract(Duration(days: 3))),
-    Transaction(
-        id: "t5",
-        title: "Novo Tênis de Agua",
-        value: 310.23,
-        date:DateTime.now().subtract(Duration(days: 4))),
-  ];
+  final List<Transaction> _transactions = [];
 
   //Busca as transações mais antigas
-  List<Transaction> get _recentTransactions{
-    return _transactions.where((tr)  {
+  List<Transaction> get _recentTransactions {
+    return _transactions.where((tr) {
       return tr.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
     }).toList();
   }
 
-   _addTransaction(String title, double value) {
-
+  _addTransaction(String title, double value, DateTime data) {
     final newTransaction = Transaction(
-        id: Random().nextDouble().toString(),
+        id: Random().nextInt(999999).toString(),
         title: title,
         value: value,
-        date: DateTime.now());
+        date: data);
 
     setState(() {
       _transactions.add(newTransaction);
@@ -99,18 +73,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
     //Fez fechar a modal
     Navigator.of(context).pop();
-
   }
 
-  _opentransactionFormModal(BuildContext context){
-    
-    showModalBottomSheet(
-      context: context, 
-      builder: (_){
-        return TransactionForm(_addTransaction);
-      }
-    );
+  _deleteTransaction(String id) {
+    setState(() {
+      _transactions.removeWhere((element) => element.id == id);
+    });
+  }
 
+  _opentransactionFormModal(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (_) {
+          return TransactionForm(_addTransaction);
+        });
   }
 
   @override
@@ -122,13 +98,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => _opentransactionFormModal(context)
-           )
+              icon: Icon(Icons.add),
+              onPressed: () => _opentransactionFormModal(context))
         ],
       ),
       body: SingleChildScrollView(
-          child: Column(
+        child: Column(
           //Main axis da coluna é a vertical
           //Adiciono um espaço ao redor dos elementos da coluna
           //mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -139,15 +114,14 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             //Para colocar um card na tela inteira da pra por ele num Containet
             //Chart(_recentTransactions),
-            TransactionList(_transactions)
+            TransactionList(_transactions, _deleteTransaction)
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => _opentransactionFormModal(context)
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat ,
+          child: Icon(Icons.add),
+          onPressed: () => _opentransactionFormModal(context)),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
