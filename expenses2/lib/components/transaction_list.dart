@@ -30,13 +30,10 @@ class TransactionList extends StatelessWidget {
                   )
             ],
           )
-        : ListView.builder(
-            //Pega quantidade de itens a serem renderizados
-            itemCount: transactions.length,
+        : ListView(
             //Essa item builder  renderiza os componentes conforme for descendo a tela
             // Para não exigir muito recurso do celular
-            itemBuilder: (contexto, index) {
-              final e = transactions[index];
+            children: transactions.map((e) {
               final GlobalKey _menuKey = new GlobalKey();
 
               return
@@ -82,46 +79,7 @@ class TransactionList extends StatelessWidget {
                   ),
                 ),
               );
-
-              //  Card(
-              //       child: Row(
-              //         children: [
-              //           Container(
-              //             margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              //             decoration: BoxDecoration(
-              //                 border: Border.all(
-              //                   //PEGA A COR DEFAULT DO THEME
-              //               color: Theme.of(context).primaryColor,
-              //               width: 2,
-              //             )),
-              //             padding: EdgeInsets.all(10),
-              //             child: Text(
-              //               'R\$${e.value.toStringAsFixed(2)}',
-              //               style: TextStyle(
-              //                   fontWeight: FontWeight.bold,
-              //                   fontSize: 20,
-              //               color: Theme.of(context).primaryColor,
-              //                 ),
-              //             ),
-              //           ),
-              //           Column(
-              //             crossAxisAlignment: CrossAxisAlignment.start,
-              //             children: [
-              //               Text(
-              //                 e.title,
-              //                 //Forma de pegar o theme do title
-              //                 style: Theme.of(context).textTheme.headline6,
-              //               ),
-              //               Text(
-              //                 DateFormat('dd MM yyyy').format(e.date),
-              //                 style: TextStyle(fontSize: 12, color: Colors.grey),
-              //               )
-              //             ],
-              //           )
-              //         ],
-              //       ),
-              //     );
-            },
+            }).toList(),
           );
   }
 }

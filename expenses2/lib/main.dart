@@ -11,11 +11,13 @@ import 'package:expenses2/models/transaction.dart';
 
 import 'models/transaction.dart';
 
+//LINK INSPIRAÇÃO PARA TELAS: https://www.youtube.com/watch?v=6zd4ziDN7XY
 main(List<String> args) {
   runApp(ExpensesApp());
 }
 
 class ExpensesApp extends StatelessWidget {
+  //Esse objeto Contexto possui uma informação para localização do componente na arvore
   @override
   Widget build(BuildContext context) {
     //ESSA PARADA AQUI DEFINE UMA ORIENTAÇÃO PRO APP
@@ -54,8 +56,40 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+//esse with é um mixin, reaproveita funcoes, esse observer verifica o estado geral do app quando esta pausado, ativo, resumido...
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   final List<Transaction> _transactions = [];
+
+//ESSE METODO É EXECUTADO ANTES DO BUILD, PODE SER USADO PARA BUSCAR COISAS NO BACKEND
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    //É NECESSARIO REGISTRAR O OBSERVER PARA FUNCIONAR A VERIFICAÇÃO DE ESTADO A NIVEL DE APLICAÇÃO
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+//ESSE METODO E EXECUTADO QUANDO UM WIDGET TA SENDO DESTRUIDO
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    //CASO SAIA DO COMPONENTE WIDGET, É NECESSARIO DES-REGISTRAR O COMPONENTE
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
+//executado quando o widget sobre alteração
+  @override
+  void didUpdateWidget(covariant MyHomePage oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+  }
+
+//esse metodo e executado quando tem alteração de estado a nivel de aplicação no celular
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print(state);
+  }
 
   //Busca as transações mais antigas
   List<Transaction> get _recentTransactions {
@@ -95,13 +129,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final MEDIA_QUERY = MediaQuery.of(context);
+
     final appBar = AppBar(
       title: Text(
         "Despesas Pessoais",
         style: TextStyle(
           //O text Scale Factor é uma propriedade que o cellar
           //tem para ampliar o tamanho da fonte
-          fontSize: 15 * MediaQuery.of(context).textScaleFactor,
+          fontSize: 15 * MEDIA_QUERY.textScaleFactor,
         ),
       ),
       actions: [
@@ -112,30 +148,33 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     //altura disponovel no disositivo - altura do appBar - altura da barra superior
     //Com isso o componente podera respeitar a altura disponivel
-    final alturaDisponivel = MediaQuery.of(context).size.height -
+    final alturaDisponivel = MEDIA_QUERY.size.height -
         appBar.preferredSize.height -
-        MediaQuery.of(context).padding.top;
+        MEDIA_QUERY.padding.top;
 
     return Scaffold(
       appBar: appBar,
-      body: SingleChildScrollView(
-        child: Column(
-          //Main axis da coluna é a vertical
-          //Adiciono um espaço ao redor dos elementos da coluna
-          //mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //Cross Axis da coluna é o horizontal
-          // Estica os elementos da coluna no eixo horizontal
-          // não precisando dai usar o width no card
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            //Para colocar um card na tela inteira da pra por ele num Containet
-            //Chart(_recentTransactions),
-            Container(
-              padding: EdgeInsets.fromLTRB(10, 0, 0, 20),
-              height: alturaDisponivel * 0.99,
-              child: TransactionList(_transactions, _deleteTransaction),
-            )
-          ],
+      body: SafeArea(
+        //ESSA PARADA CRIA UMA AREA SEGURA PARA O CORPO DO APP
+        child: SingleChildScrollView(
+          child: Column(
+            //Main axis da coluna é a vertical
+            //Adiciono um espaço ao redor dos elementos da coluna
+            //mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //Cross Axis da coluna é o horizontal
+            // Estica os elementos da coluna no eixo horizontal
+            // não precisando dai usar o width no card
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              //Para colocar um card na tela inteira da pra por ele num Containet
+              //Chart(_recentTransactions),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 0, 0, 20),
+                height: alturaDisponivel * 0.99,
+                child: TransactionList(_transactions, _deleteTransaction),
+              )
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
