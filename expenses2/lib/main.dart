@@ -1,5 +1,5 @@
-import 'package:expenses2/components/chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'components/transaction_form.dart';
 
@@ -10,7 +10,6 @@ import 'package:expenses2/components/transaction_list.dart';
 import 'package:expenses2/models/transaction.dart';
 
 import 'models/transaction.dart';
-import 'models/transaction.dart';
 
 main(List<String> args) {
   runApp(ExpensesApp());
@@ -19,6 +18,11 @@ main(List<String> args) {
 class ExpensesApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    //ESSA PARADA AQUI DEFINE UMA ORIENTAÇÃO PRO APP
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
     return MaterialApp(
       home: MyHomePage(),
       theme: ThemeData(
@@ -91,17 +95,29 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Despesas Pessoais",
+    final appBar = AppBar(
+      title: Text(
+        "Despesas Pessoais",
+        style: TextStyle(
+          //O text Scale Factor é uma propriedade que o cellar
+          //tem para ampliar o tamanho da fonte
+          fontSize: 15 * MediaQuery.of(context).textScaleFactor,
         ),
-        actions: [
-          IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () => _opentransactionFormModal(context))
-        ],
       ),
+      actions: [
+        IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () => _opentransactionFormModal(context))
+      ],
+    );
+    //altura disponovel no disositivo - altura do appBar - altura da barra superior
+    //Com isso o componente podera respeitar a altura disponivel
+    final alturaDisponivel = MediaQuery.of(context).size.height -
+        appBar.preferredSize.height -
+        MediaQuery.of(context).padding.top;
+
+    return Scaffold(
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           //Main axis da coluna é a vertical
@@ -114,7 +130,11 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             //Para colocar um card na tela inteira da pra por ele num Containet
             //Chart(_recentTransactions),
-            TransactionList(_transactions, _deleteTransaction)
+            Container(
+              padding: EdgeInsets.fromLTRB(10, 0, 0, 20),
+              height: alturaDisponivel * 0.99,
+              child: TransactionList(_transactions, _deleteTransaction),
+            )
           ],
         ),
       ),
