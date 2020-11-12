@@ -1,3 +1,4 @@
+import 'package:expenses2/components/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -26,7 +27,7 @@ class ExpensesApp extends StatelessWidget {
     ]);
 
     return MaterialApp(
-      home: MyHomePage(),
+      home: Login(),
       theme: ThemeData(
           primaryColor: Colors.teal[900],
           primarySwatch: Colors.teal,
@@ -135,10 +136,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       title: Text(
         "Despesas Pessoais",
         style: TextStyle(
-          //O text Scale Factor é uma propriedade que o cellar
-          //tem para ampliar o tamanho da fonte
-          fontSize: 15 * MEDIA_QUERY.textScaleFactor,
-        ),
+            //O text Scale Factor é uma propriedade que o cellar
+            //tem para ampliar o tamanho da fonte
+            fontSize: 15 * MEDIA_QUERY.textScaleFactor,
+            backgroundColor: Colors.transparent),
       ),
       actions: [
         IconButton(
